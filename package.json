@@ -1,0 +1,30 @@
+{
+  "name": "telegram-bot-euro",
+  "version": "1.0.0",
+  "description": "telegram bot for euro2020",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alxbychkov/telegram-bot-euro.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "js",
+    "node.js"
+  ],
+  "author": "Bychkov A. <alx.bychkov@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alxbychkov/telegram-bot-euro/issues"
+  },
+  "homepage": "https://github.com/alxbychkov/telegram-bot-euro#readme",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.53.0",
+    "nodemon": "^2.0.7"
+  }
+}
