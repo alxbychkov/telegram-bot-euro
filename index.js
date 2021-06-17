@@ -1,6 +1,8 @@
 const token = '1846537727:AAHNwxSLUUXmOghPaOuaVEwotlOXiUbke8g'
 const telegramApi = require('node-telegram-bot-api')
 const {todayGames} = require('./core/data')
+const sequelize = require('./core/db')
+
 const bot = new telegramApi(token, {polling: true})
 
 const startGameOptions = {
@@ -9,6 +11,12 @@ const startGameOptions = {
             [{text: 'Гоу \u26bd\ufe0f', callback_data: 'go'},{text: 'Сольюсь.. \ud83c\udf44', callback_data: 'out'}]
         ]
     })
+}
+
+try {
+    sequelize.authenticate()
+} catch (e) {
+    console.log('Пдключение к бд сломалось.', e)
 }
 
 bot.setMyCommands([
