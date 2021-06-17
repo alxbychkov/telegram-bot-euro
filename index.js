@@ -40,7 +40,7 @@ bot.on('callback_query', async msg => {
         await bot.sendMessage(chatId, `Отлично. Погнали! \ud83c\udfc3\ud83c\udffb`)
         showMatches(chatId)   
     }
-    if (typeof +data === 'number') {
+    if (typeof +data === 'number' && +data) {
         await bot.sendMessage(chatId, `Ты выбрал матч ${todayGames.find(el => el.id === +data).game}. Напиши как он по твоему закончиться?`)
     }
 })
@@ -48,7 +48,7 @@ bot.on('callback_query', async msg => {
 
 async function showMatches(chatId) {
     const now = new Date()
-    const games = 2
+    const games = 3
     const match = (games === 1) ? 'матч' : 'матча'
     const gameOptions = {reply_markup: ''}
 
