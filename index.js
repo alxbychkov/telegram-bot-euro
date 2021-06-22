@@ -15,7 +15,7 @@ const init = async () => {
         sequelize.authenticate()
         sequelize.sync()
     } catch (e) {
-        console.log('Пдключение к бд сломалось.', e)
+        console.log('Подключение к бд сломалось.', e)
     }
 
     await ChatModel.findAll().then(res => {
@@ -42,14 +42,20 @@ const init = async () => {
                     }
                 })
                 await bot.sendMessage(chatId, `Спасибо что зашел, ${name}! Мы тут решили немного поиграть. \ud83d\udca3`)
+                await bot.sendMessage(chatId, `Чтобы посмотреть команды, нажми "/" в строке ввода.`)
+                await bot.sendMessage(chatId, `Или введи сам /game - начать`)
+                await bot.sendMessage(chatId, `Или введи сам /stats - статистика`)
             }
             if (text === '/game') {
                 await bot.sendMessage(chatId, `Хорошо, давай поиграем. Ты готов начать?`, startGameOptions)
             }
             if (text === '/stats') {
                 const user = await FriendModel.findOne({ chatId, where: { chatId } })
-                // const userRes = JSON.parse(user.result)
-                await bot.sendMessage(chatId, `Тут скоро будет статистика. Потерпи, ${user.name}.`)
+                const userRes = JSON.parse(user.result)
+                const message = showResults(userRes)
+                await bot.sendMessage(chatId, message)
+                const table = await showFinalTable()
+                await bot.sendMessage(chatId, table)
             }
             if (text[0] === '%' && chatsGames[chatId]) {
                 const user = await FriendModel.findOne({ chatId, where: { chatId } })
@@ -113,4 +119,42 @@ async function showMatches(chatId) {
         gameOptions.reply_markup = JSON.stringify(dayGames)
         await bot.sendMessage(chatId, `Сегодня ${now.toLocaleDateString()}. И в программне ${games} ${match}. На кого будешь ставить?`, gameOptions)
     }
+}
+
+function showResults(result) {
+    let msg = 'Твои ставки:\n\n'
+    let score = 0
+    if (typeof result === 'object') {
+        Object.keys(result).forEach(key => {
+            const game = todayGames.filter(g => g.id == key)
+            msg += `${game[0].game}: ${result[key]}\n`
+            if (result[key] === game[0].result) score++
+        })
+        msg += `\nТвои баллы: ${score}`
+        return msg
+    }
+    return false
+}
+
+async function showFinalTable() {
+    let msg = 'Таблица:\n\n'
+    const users = await FriendModel.findAll().then(res => result = JSON.parse(JSON.stringify(res)))
+    let obj = []
+
+    users.forEach(user => {
+        const name = `${user.name} ${user.lastname}`
+        const userRes = user.result ? JSON.parse(user.result) : {}
+        let score = 0
+
+        if (typeof userRes === 'object') {
+            Object.keys(userRes).forEach(key => {
+                const game = todayGames.filter(g => g.id == key)
+                if (userRes[key] === game[0].result) score++
+            })
+            obj.push({id: score, name})
+        }
+    })
+
+    obj.sort((a,b) => b.id - a.id).forEach(el => msg += `${el.name} - ${el.id}\n`)
+    return msg
 }
