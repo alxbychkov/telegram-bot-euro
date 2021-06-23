@@ -51,7 +51,7 @@ const init = async () => {
             }
             if (text === '/stats') {
                 const user = await FriendModel.findOne({ chatId, where: { chatId } })
-                const userRes = JSON.parse(user.result)
+                const userRes = user.result ? JSON.parse(user.result) : {}
                 const message = showResults(userRes)
                 await bot.sendMessage(chatId, message)
                 const table = await showFinalTable()
@@ -85,7 +85,7 @@ const init = async () => {
             const game = todayGames.find(el => el.id === +data).game
             const id = todayGames.find(el => el.id === +data).id
 
-            if (chats[chatId][id] !== '' && chats[chatId][id] !== undefined) return bot.sendMessage(chatId, `Ты уже поставил на этот матч ${chats[chatId][id]}. Отдыхай =)`)
+            if (chats[chatId][id] !== undefined && chats[chatId][id] !== "") return bot.sendMessage(chatId, `Ты уже поставил на этот матч ${chats[chatId][id]}. Отдыхай =)`)
 
             if (chats[chatId]) {
                 chatsGames[chatId] = id
